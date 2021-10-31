@@ -10,7 +10,6 @@ var audio = $('#audio');
 var btnPlay = $('.btn-toggle-play');
 var player = $('.player');
 var progress = $('#progress');
-console.log(audio);
 var btnNext = $('.btn-next');
 var btnPrev =$('.btn-prev');
 var btnRandom = $('.btn-random');
@@ -101,40 +100,31 @@ const app = {
         })
         
     },
-    handelEvent : function(){
-        
+    handelEvent : function(){ 
         // Xử lí phóng to thu nhỏ CD
         var cdWidth = cd.offsetWidth;
-        document.onscroll = function(){ // sự kiện lăng chuột kéo màng hình
-           // console.log(window.scrollY);   // giá trị khi ta éo trên cửa sổ window
+        document.onscroll = function(){ 
             var scrollScreen = window.scrollY || document.documentElement.scrollTop;
             var newWidth = cdWidth - scrollScreen;  
             cd.style.width = newWidth + 'px' ;
-            cd.style.opacity = newWidth/cdWidth; // lấy tỉ lệ   
+            cd.style.opacity = newWidth/cdWidth; 
         }
         // Xử lí quay CD
-        const cdAmination = cd_cdthum.animate([ // trả về một đối tương animation là cdAmintion 
-            {transform : 'rotate(360deg)'} // trong đó thì cd_thum sẽ nhận đc animation là transform : 'rotate(360deg)'
+        const cdAmination = cd_cdthum.animate([ 
+            {transform : 'rotate(360deg)'} 
             ],
-            {   duration : 10000, // Thời gian chạy 10s
-                iterations : Infinity // Vòng lập vĩnh viễn
+            {   duration : 10000, 
+                iterations : Infinity 
         })
-        cdAmination.pause();  // Để dừng animation 
-        /* xử lí quay CD sẽ được chuyển xuống Event audio.onplay vs audio.pause  */
-        
-         
+        cdAmination.pause();   
         // Xủ lí phát nhạc (Play audio)
         var _this = this;
          btnPlay.onclick = ()=>{
             if(_this.isplaying){
                 audio.pause();
-                /* player.classList.remove('playing');
-                this.isplaying = false; */
             }
             else{
                 audio.play();
-               /*  player.classList.add('playing');
-                this.isplaying = true; */
             }
             
         }
@@ -144,23 +134,18 @@ const app = {
             player.classList.add('playing');
             cdAmination.play();
         }
-
         // Khi Song bị Pause
         audio.onpause = function (){
             _this.isplaying = false;
             player.classList.remove('playing');
             cdAmination.pause();
         }
-       
         // Khi tiến độ bài hát thây đổi 
         audio.ontimeupdate = function(){
             let progressPencent ;
-            // console.log(audio.currentTime); // trả về số giây chạy được của bài hát
-            // console.log(audio.duration); // tổng thời lượng của bài hát tính băng giây
-            //console.log(Math.floor(audio.currentTime/audio.duration * 100)); // Tính phần trăm chạy được của bài hát 
             if(audio.duration){              
                 progressPencent = Math.floor(audio.currentTime/audio.duration * 100); 
-                progress.value = progressPencent; // xét phần trăm chạy đc của bài hát vào thanh progress
+                progress.value = progressPencent; 
             }
         }    
         // Xử lí chuyển bài hát khi hát hết bài
@@ -171,20 +156,15 @@ const app = {
                 }else{
                     _this.nextSong();           
                 }    
-                  
             }else{
                 _this.repeatSong();
             }
             _this.render();   
             audio.play();
         }
-        
         // Xử lí khi tua bài hát 
         progress.onchange = (e)=>{
-            //console.log(progress.value); // lấy ra giá trị value khi ta di chuyển thanh progress cách 1
-             //e.target.value              // lấy ra giá trị value khi ta di chuyển thanh progress cách 2
-            console.log(audio.duration /100 * e.target.value ); // tính ra vị trí của bài hát khi ta kéo thanh Progrees
-            const seeTime = audio.duration /100 * e.target.value;
+            const seeTime = audio.duration /100 * e.target.value; // tính ra vị trí của bài hát khi ta kéo thanh Progrees
             audio.currentTime = seeTime;
         }
         // xử lí khi random
@@ -193,7 +173,6 @@ const app = {
             _this.setConfig('isRandom', _this.isRandom);
             btnRandom.classList.toggle('active', _this.isRandom);
         }
-
         // Khi Next bài Hát
         btnNext.onclick = ()=>{
             if(_this.isRandom){
@@ -218,45 +197,37 @@ const app = {
             _this.render();
             
         }
-
         // Khi Repeact bài hát
         btnrepeat.onclick = ()=>{
             _this.isRepeact = !_this.isRepeact;
             _this.setConfig('isRepeact', _this.isRepeact);
             btnrepeat.classList.toggle('active', _this.isRepeact);
-            console.log(_this.isRepeact);
         }
         // Khi active một bài hát bất kì
         playlist.onclick = function(e){
-            var songNode = e.target.closest('.song:not(.active)'); //'.song:not(.active)' lấy nhữ element song không có class active;
+            var songNode = e.target.closest('.song:not(.active)'); //closest sẽ trả về element chính nó hoặc ccon nó nếu không tìm thấy thì nó sẽ trả về null
             var songOption = e.target.closest('.option');
             // e.target sẽ trả về giá trị mà t click vào ngay chỗ đó
-            //closest sẽ trả về element chính nó hoặc ccon nó nếu không tìm thấy thì nó sẽ trả về null
             // nếu phần tử element mà ta click vào ... kiểm tra xem có tìm thấy element song hoặc con của element song không có class active hay không ?
             if(songNode || songOption ){ 
-               if(songNode){ // songNode là 1 element song
-                _this.CurrentIndex = Number(songNode.dataset.index); // == songNode.getAttribute('data-index');
+               if(songNode){ 
+                _this.CurrentIndex = Number(songNode.dataset.index); // === songNode.getAttribute('data-index');
                 _this.loadCurrentSong();
                 _this.render();
                 audio.play();
-               
                }
                if(songOption){
-
+                    //ử lí code khi ta click vào option
                }
-            }
-            
+            }  
         }
-
     },
     // Load Config
-    loadConfig : function(){
+    loadConfig : function(){ // Cách 1 
         this.isRandom = this.config.isRandom;
         this.isRepeact = this.config.isRepeact;
         this.isActive = this.config.isActive;
-
        /*  Object.assign(this , this.config){ // cách 2
-
         } */
 
     },
@@ -299,16 +270,12 @@ const app = {
             })
         },200)
     },
-   
-    
     // Xủ lí tải bài hát đầu tiên lên UI 
     loadCurrentSong : function(){
         heading.innerText = this.currentSong.name;
         cd_cdthum.style.backgroundImage  = `url('${this.currentSong.picture}')`;
         audio.src = this.currentSong.path;
-        
     },
-    
     start : function(){
         //Load cấu hình của hệ thống
         this.loadConfig();
